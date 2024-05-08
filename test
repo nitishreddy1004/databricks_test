@@ -1,1 +1,12 @@
 @replace(replace(replace(dataset().file_name_format, '$YYYY', utcNow('yyyy')), '$MM', utcNow('MM')), '$DD', utcNow('dd'))
+
+CREATE TABLE FILE_EXPORT_LOG(
+    CONTROL_ID INT,
+    PIPELINE_ID STRING,
+    START_DATE STRING,
+    END_DATE STRING,
+    EXPORT_DATE STRING
+);
+
+
+@concat('INSERT INTO FOG.FILE_EXPORT_LOG(CONTROL_ID, PIPELINE_ID, START_DATE, END_DATE, EXPORT_DATE) VALUES (', item().CONTROL_ID, ',''', activity('Execute SfToBlobE2E').output.pipelineReturnValue.pipeline_id,'''', ',''', activity('Execute SfToBlobE2E').output.pipelineReturnValue.start_date,'''', ',''', activity('Execute SfToBlobE2E').output.pipelineReturnValue.end_date,'''',',''', activity('Execute SfToBlobE2E').output.pipelineReturnValue.export_date,'''', ')')
