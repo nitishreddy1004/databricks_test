@@ -1,0 +1,1 @@
+@replace(replace(replace(dataset().file_name_format, '$YYYY', utcNow('yyyy')), '$MM', utcNow('MM')), '$DD', utcNow('dd'))
