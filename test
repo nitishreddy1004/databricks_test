@@ -10,3 +10,6 @@ CREATE TABLE FILE_EXPORT_LOG(
 
 
 @concat('INSERT INTO FOG.FILE_EXPORT_LOG(CONTROL_ID, PIPELINE_ID, START_DATE, END_DATE, EXPORT_DATE) VALUES (', item().CONTROL_ID, ',''', activity('Execute_SF_to_Blob').output.pipelineReturnValue.pipeline_id,'''', ',''', activity('Execute_SF_to_Blob').output.pipelineReturnValue.start_date,'''', ',''', activity('Execute_SF_to_Blob').output.pipelineReturnValue.end_date,'''',',''', activity('Execute_SF_to_Blob').output.pipelineReturnValue.export_date,'''', ')')
+
+V_FIELDS = (SELECT FIELDS FROM DATAFORCE.FOG.FILE_EXPORT_CONTROL WHERE CONTROL_ID = P_CONTROL_ID);
+RETURN V_FIELDS;
