@@ -1,1 +1,3 @@
 nn
+
+@if(greater(length(activity("Query_Control_Table').output.resultSets[0].rows), 0), activity("Query_Control_Table').output.resultSets[0].rows, json('[]'))
