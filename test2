@@ -3,3 +3,5 @@ nn
 @if(greater(length(activity("Query_Control_Table').output.resultSets[0].rows), 0), activity("Query_Control_Table').output.resultSets[0].rows, json('[]'))
 
 VS_SQLSTM := ''CREATE OR REPLACE TABLE '' || :V_TARGET_TABLE || '' SELECT '' || :V_FIELDS || '' FROM '' || :V_SOURCE_TABLE || '' WHERE FALSE''; 
+
+@concat(pipeline().Pipeline, ' failed due to: \n', activity('Execute_SF_to_Blob').Error.message, '\n')
