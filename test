@@ -1,1 +1,5 @@
-mn
+CREATE OR REPLACE STAGE FILE_EXPORT_STAGE
+  URL = 'azure://<storage_account>.blob.core.windows.net/<container>'
+  CREDENTIALS = (AZURE_SAS_TOKEN = '<sas_token>');
+
+CREATE OR REPLACE STREAM FILE_EXPORT_TEST_STREAM ON TABLE TEST;
