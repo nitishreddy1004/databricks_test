@@ -1,1 +1,45 @@
+CREATE OR REPLACE PROCEDURE CREATE_STREAM_AND_TASK(DATABASE STRING, SCHEMA STRING, TABLE STRING)
+RETURNS STRING
+LANGUAGE SQL
+AS
+$$
+DECLARE
+  concatenated STRING;
+  stream STRING;
+  task STRING;
+  stage STRING;
+  create_stream_sql STRING;
+  create_task_sql STRING;
+BEGIN
+  concatenated := DATABASE || '_' || SCHEMA || '_' || TABLE;
+  stream := concatenated || '_STREAM';
+  task := concatenated || '_TASK';
+  stage := concatenated || '_STAGE';
+  
+  -- Create the stream
+  create_stream_sql := 'CREATE OR REPLACE STREAM ' || stream || ' ON TABLE ' || DATABASE || '.' || SCHEMA || '.' || TABLE || ';';
+  EXECUTE IMMEDIATE create_stream_sql;
+  
+  -- Create the task
+  create_task_sql := '
+  CREATE OR REPLACE TASK ' || task || '
+  WAREHOUSE = ''COMPUTE_XSMALL''
+  SCHEDULE = ''1 MINUTE''
+  WHEN SYSTEM$STREAM_HAS_DATA(''' || stream || ''')
+  AS
+  BEGIN
+    EXECUTE IMMEDIATE ('''
+      COPY INTO @' || stage || '/' || concatenated || '_'' || TO_CHAR(CURRENT_TIMESTAMP(), ''YYYYMMDD_HH24:MI:SS'') || ''.json 
+      FROM (SELECT OBJECT_CONSTRUCT(''''ROW_DATA'''', OBJECT_CONSTRUCT(*), ''''TABLE_NAME'''', ''''' || TABLE || ''''') AS SOURCE 
+      FROM ' || stream || ') 
+      FILE_FORMAT = (TYPE = ''''JSON'''', COMPRESSION = ''''NONE'''') 
+      SINGLE = TRUE 
+      MAX_FILE_SIZE = 16777216;
+    '');
+  END;';
+  
+  RETURN 'Stream and Task created successfully';
+END;
+$$;
+
 
