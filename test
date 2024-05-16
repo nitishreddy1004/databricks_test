@@ -4,17 +4,17 @@ LANGUAGE SQL
 AS
 $$
 DECLARE
-  concatenated STRING;
+  FULL_TABLE_NAME STRING;
   stream STRING;
   task STRING;
   stage STRING;
   create_stream_sql STRING;
   create_task_sql STRING;
 BEGIN
-  concatenated := DATABASE || '_' || SCHEMA || '_' || TABLE;
-  stream := concatenated || '_STREAM';
-  task := concatenated || '_TASK';
-  stage := concatenated || '_STAGE';
+  FULL_TABLE_NAME := DATABASE || '_' || SCHEMA || '_' || TABLE;
+  stream := FULL_TABLE_NAME || '_STREAM';
+  task := FULL_TABLE_NAME || '_TASK';
+  stage := FULL_TABLE_NAME || '_STAGE';
   
   -- Create the stream
   create_stream_sql := 'CREATE OR REPLACE STREAM ' || stream || ' ON TABLE ' || DATABASE || '.' || SCHEMA || '.' || TABLE || ';';
@@ -29,7 +29,7 @@ BEGIN
   AS
   BEGIN
     EXECUTE IMMEDIATE ('''
-      COPY INTO @' || stage || '/' || concatenated || '_'' || TO_CHAR(CURRENT_TIMESTAMP(), ''YYYYMMDD_HH24:MI:SS'') || ''.json 
+      COPY INTO @' || stage || '/' || FULL_TABLE_NAME || '_'' || TO_CHAR(CURRENT_TIMESTAMP(), ''YYYYMMDD_HH24:MI:SS'') || ''.json 
       FROM (SELECT OBJECT_CONSTRUCT(''''ROW_DATA'''', OBJECT_CONSTRUCT(*), ''''TABLE_NAME'''', ''''' || TABLE || ''''') AS SOURCE 
       FROM ' || stream || ') 
       FILE_FORMAT = (TYPE = ''''JSON'''', COMPRESSION = ''''NONE'''') 
@@ -41,5 +41,3 @@ BEGIN
   RETURN 'Stream and Task created successfully';
 END;
 $$;
-
-
