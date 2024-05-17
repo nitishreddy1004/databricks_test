@@ -42,3 +42,27 @@ END;
 $$;
 
 CALL CREATE_STREAM_AND_TASK('DATAFORCE','FOG','TEST');
+
+
+
+
+logging.info(f"Processing blob \n Name: {myblob.name} \n Size: {myblob.length} bytes")
+    
+    # Set up Kafka producer configuration
+    kafka_conf = {
+        'bootstrap.servers': 'YOUR_BOOTSTRAP_SERVERS',
+        'client.id': 'azure_function'
+    }
+    producer = Producer(kafka_conf)
+    kafka_topic = 'YOUR_KAFKA_TOPIC'
+    
+    # Read JSON data from blob
+    json_data = myblob.read().decode('utf-8')
+    
+    # Send JSON data to Kafka
+    try:
+        producer.produce(kafka_topic, key=myblob.name, value=json_data)
+        producer.flush()
+        logging.info(f"Successfully sent blob {myblob.name} to Kafka topic {kafka_topic}")
+    except Exception as e:
+        logging.error(f"Failed to send blob {myblob.name} to Kafka: {e}")
