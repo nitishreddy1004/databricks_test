@@ -12,7 +12,7 @@ def SfBlobKafkaFunction(myblob: func.InputStream):
                 f"Blob Size: {myblob.length} bytes")
     print("---------START KAFKA-----------")
     # Installing 
-    os.system(f'sudo pip install const')
+    os.system(f'sudo pip install kafka-python')
 
     #Importing 
     from kafka import KafkaProducer
@@ -35,11 +35,16 @@ def SfBlobKafkaFunction(myblob: func.InputStream):
         key_serializer=lambda k: k.encode('utf-8')
     )
     
-    try:
-        producer.send(kafka_topic, key='test_key', value='test_value').get(timeout=10)
-        print("Kafka connection established successfully.")
-    except KafkaError as e:
-        print(f"Failed to connect to Kafka: {e}")
+    # Read JSON data from blob
+    blob_data = myblob.read().decode('utf-8')
+    print("[DEBUG] blob data: ", blob_data)
+    print("[DEBUG] blob data type: ", type(blob_data))
 
+    # Send JSON data to Kafka
+    try:
+        producer.send(kafka_topic, key=myblob.name, value=blob_data).get(timeout=10)
+        print(f"Successfully sent blob {myblob.name} to Kafka topic {kafka_topic}")
+    except KafkaError as e:
+        print(f"Failed to send blob {myblob.name} to Kafka: {e}")
 
     print("-------END-------")
