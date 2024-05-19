@@ -1,1 +1,45 @@
-from confluent_kafka import Producer, KafkaException
+import azure.functions as func
+import logging
+import os
+
+app = func.FunctionApp()
+
+@app.blob_trigger(arg_name="myblob", path="file-export/kafka/{name}",
+                               connection="dwazstorageprod_STORAGE")
+def SfBlobKafkaFunction(myblob: func.InputStream):
+    logging.info(f"Python blob trigger function processed blob"
+                f"Name: {myblob.name}"
+                f"Blob Size: {myblob.length} bytes")
+    print("---------START KAFKA-----------")
+    # Installing 
+    os.system(f'sudo pip install const')
+
+    #Importing 
+    from kafka import KafkaProducer
+    kafka_conf = {
+        'bootstrap_servers': 'pkc-ldvmy.centralus.azure.confluent.cloud:9092',
+        'security_protocol': 'SASL_SSL',  # or 'SASL_PLAINTEXT' depending on your setup
+        'sasl_mechanism': 'PLAIN',
+        'sasl_plain_username': 'HP5AWQDHKBFZW35J',
+        'sasl_plain_password': 'sbsiAqn15eysS2nN/5w2zYcI0sXhQMHnwr11MkePz9S1JzdYzFXuqodYGw8swfvB'
+    }
+    kafka_topic = 'snowflake_producer_poc'
+
+    producer = KafkaProducer(
+        bootstrap_servers=kafka_conf['bootstrap_servers'],
+        security_protocol=kafka_conf['security_protocol'],
+        sasl_mechanism=kafka_conf['sasl_mechanism'],
+        sasl_plain_username=kafka_conf['sasl_plain_username'],
+        sasl_plain_password=kafka_conf['sasl_plain_password'],
+        value_serializer=lambda v: v.encode('utf-8'),
+        key_serializer=lambda k: k.encode('utf-8')
+    )
+    
+    try:
+        producer.send(kafka_topic, key='test_key', value='test_value').get(timeout=10)
+        print("Kafka connection established successfully.")
+    except KafkaError as e:
+        print(f"Failed to connect to Kafka: {e}")
+
+
+    print("-------END-------")
