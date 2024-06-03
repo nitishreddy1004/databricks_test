@@ -9,9 +9,6 @@ RUN echo "plugin.path=/opt/bitnami/kafka/libs" >> /opt/bitnami/kafka/config/conn
 # Download the Snowflake Kafka connector
 RUN curl -o /opt/bitnami/kafka/libs/snowflake-kafka-connector-2.1.0.jar https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/2.1.0/snowflake-kafka-connector-2.1.0.jar
 
-# Create a Kafka topic (placeholder, replace 'your_topic_name' with the actual topic name)
-RUN /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic topic1 --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
-
 # Copy the startup script
 COPY start-kafka.sh /opt/bitnami/scripts/start-kafka.sh
 RUN chmod +x /opt/bitnami/scripts/start-kafka.sh
