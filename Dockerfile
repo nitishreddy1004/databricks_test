@@ -10,8 +10,8 @@ RUN echo "plugin.path=/opt/bitnami/kafka/libs" >> /opt/bitnami/kafka/config/conn
 RUN curl -o /opt/bitnami/kafka/libs/snowflake-kafka-connector-2.1.0.jar https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/2.1.0/snowflake-kafka-connector-2.1.0.jar
 
 # Copy the startup script
-COPY start-kafka.sh /opt/bitnami/scripts/start-kafka.sh
-RUN chmod +x /opt/bitnami/scripts/start-kafka.sh
+COPY --chmod=777 start-kafka.sh /opt/bitnami/scripts/start-kafka.sh
+#RUN chmod +x /opt/bitnami/scripts/start-kafka.sh
 
 # Start Kafka with the custom configuration
 CMD ["/opt/bitnami/scripts/start-kafka.sh"]
