@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Wait for Zookeeper to start
-sleep 120
-
 # Check if the Kafka topic exists, and create it if it doesn't
 TOPIC_NAME=topic1
 EXISTING_TOPIC=$(/opt/bitnami/kafka/bin/kafka-topics.sh --list --bootstrap-server localhost:9092 | grep -w $TOPIC_NAME)
