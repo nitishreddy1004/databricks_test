@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Wait for Zookeeper to start
-sleep 10
+sleep 120
 
 # Check if the Kafka topic exists, and create it if it doesn't
 TOPIC_NAME=topic1
