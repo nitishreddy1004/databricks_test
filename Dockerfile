@@ -1,5 +1,7 @@
 FROM bitnami/kafka:3.4
 
+ENV KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+
 # Copy SF_connect.properties to the Kafka config directory
 COPY SF_connect.properties /opt/bitnami/kafka/config/
 
