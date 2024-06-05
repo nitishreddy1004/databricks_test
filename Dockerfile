@@ -17,4 +17,3 @@ COPY --chmod=777 wait-for-it.sh /opt/bitnami/scripts/wait-for-it.sh
 
 # Start Kafka with the custom configuration
 CMD ["/opt/bitnami/scripts/wait-for-it.sh", "kafka:9092", "--", "/opt/bitnami/scripts/start-kafka.sh"]
-
