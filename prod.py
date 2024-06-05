@@ -1,5 +1,6 @@
 from kafka import KafkaProducer
 import json
+import time
 
 def create_large_message(num_keys):
     """Create a large message with the specified number of keys."""
