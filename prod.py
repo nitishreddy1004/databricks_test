@@ -5,7 +5,7 @@ import time
 def create_large_message(num_keys):
     """Create a large message with the specified number of keys."""
     message = {f"key_{i}": f"value_{i}" for i in range(num_keys)}
-    message["epoch_time"] = int(time.time())
+    message["epoch_time"] = round(time.time() * 1000)
     return json.dumps(message).encode('utf-8')
 
 def produce_large_message(broker, topic, num_keys):
@@ -28,5 +28,6 @@ if __name__ == "__main__":
     kafka_topic = 'topic1'       # Update with your Kafka topic name
     num_keys = 10                 # Number of keys in the message
 
-    produce_large_message(kafka_broker, kafka_topic, num_keys)
+    for _ in range(1000):
+        produce_large_message(kafka_broker, kafka_topic, num_keys)
 
